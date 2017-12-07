@@ -42,7 +42,6 @@ public abstract class DiffieHellmanKeyGenerator implements KeyGenerator {
 
 	public String sendToMainServer(String username, int key) {
 		System.setProperty("java.security.policy", "mypolicy");
-		System.out.println(">");
 		if (System.getSecurityManager() == null)
 			System.setSecurityManager(new SecurityManager());
 		try {

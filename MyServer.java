@@ -25,7 +25,6 @@ public class MyServer extends DiffieHellmanKeyGenerator {
 	}
 
 	public static void main(String[] args) {
-		System.setProperty("java.security.policy", "mypolicy");
 		MyServer server = new MyServer("191","131");
 		server.initServer();
 	}

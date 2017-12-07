@@ -7,35 +7,39 @@ import java.io.IOException;
 public class MyClient extends DiffieHellmanKeyGenerator {
 	private KeyGenerator server;
 
-	public MyClient() {
-		connect();
-		readServerValues();
-		System.out.println("Client Key: " + key);
+	public MyClient(String host, String username) {
+		connect(host);
+		readServerValues(username);
 	}
 
-	public void connect() {
+	public void connect(String host) {
 		try {
-			Registry registry = LocateRegistry.getRegistry();
+			Registry registry = LocateRegistry.getRegistry(host);
 			server = (KeyGenerator) registry.lookup("DHG");
 		} catch (IOException | NotBoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void readServerValues() {
+	public void readServerValues(String username) {
 		try {
 			prime = server.getPrime();
 			primitiveRoot = server.getPrimitive();
 			mod = calculateKey(prime, primitiveRoot);
 			key = calculateKey(prime, server.getMod());
+			System.out.println("Client Key: " + key);
 			server.setKey(mod);
-			System.out.println(server.sendToMainServer("hk1n15", key.intValue()));
+			String encoded = server.sendToMainServer(username, key.intValue());
+			System.out.println("Encrypted:\n" + encoded);
+			Decrypter d = new Decrypter(encoded);
+			System.out.println("Decrypted:");
+			d.decrypt(key.intValue());
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public static void main(String[] args) {
-		MyClient client = new MyClient();
+		MyClient client = new MyClient(args[0],args[1]);
 	}
 }
