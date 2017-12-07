@@ -11,7 +11,7 @@ public class Decrypter {
 			}
 	}
 
-	public void decrypt(int key) {
+	public String decrypt(int key) {
 		deSubstitute(key);
 		deTranspose(key);
 		deSubstitute(key);
@@ -21,6 +21,7 @@ public class Decrypter {
 			for (int j=0; j<8; j++)
 				out += bytes[i][j];
 		System.out.println(out);
+		return out;
 	}
 
 	public void deTranspose(int key) {
