@@ -14,7 +14,7 @@ public abstract class DiffieHellmanServer extends DiffieHellmanKeyGenerator impl
 			System.setSecurityManager(new SecurityManager());
 	}
 
-	public synchronized void connect(UUID clientID) throws RemoteException {
+	public synchronized void connect(UUID clientID, KeyClient client) throws RemoteException {
 		BigInteger uniquePV = new BigInteger(5, rand);
 		boolean unique = true;
 		do {
@@ -27,18 +27,8 @@ public abstract class DiffieHellmanServer extends DiffieHellmanKeyGenerator impl
 				}
 		} while (!unique);
 
-		ClientInfo uniqueClient = new ClientInfo(uniquePV, connectToClient(clientID));
+		ClientInfo uniqueClient = new ClientInfo(uniquePV, client);
 		clients.put(clientID, uniqueClient);
-	}
-	private KeyClient connectToClient(UUID client) {
-		try {
-			Registry registry = LocateRegistry.getRegistry();
-			KeyClient clstub = (KeyClient) registry.lookup(client.toString());
-			return clstub;
-		} catch (RemoteException | NotBoundException e) {
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	public BigInteger getPrime() throws RemoteException {
@@ -59,10 +49,8 @@ public abstract class DiffieHellmanServer extends DiffieHellmanKeyGenerator impl
 		try {
 			Registry timReg = LocateRegistry.getRegistry("svm-tjn1f15-comp2207.ecs.soton.ac.uk", 12345);
 			CiphertextInterface ctstub = (CiphertextInterface) timReg.lookup("CiphertextProvider");
-			System.out.println("INNER HERE");
 			clients.get(client).client.sendData(ctstub.get(username, clients.get(client).key.intValue()));
 		} catch (RemoteException | NotBoundException e) {
-			System.out.println("OUTER HERE");
 			e.printStackTrace();
 		}
 	}

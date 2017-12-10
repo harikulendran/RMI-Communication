@@ -13,26 +13,16 @@ public class MyClient extends DiffieHellmanKeyGenerator implements KeyClient {
 	public MyClient(String host, String username) {
 		myID = UUID.randomUUID();
 		this.username = username;
-		initClient();
 		connect(host);
 		exchange();
-	}
-
-	private void initClient() {
-		try {
-			KeyClient thisClient = (KeyClient) UnicastRemoteObject.exportObject(this, 0);
-			Registry registry = LocateRegistry.getRegistry();
-			registry.bind(myID.toString(), thisClient);
-		} catch (IOException | AlreadyBoundException e) {
-			e.printStackTrace();
-		}
 	}
 
 	private void connect(String host) {
 		try {
 			Registry registry = LocateRegistry.getRegistry(host);
 			server = (KeyServer) registry.lookup("DHG");
-			server.connect(myID);
+			KeyClient thisClient = (KeyClient) UnicastRemoteObject.exportObject(this, 0);
+			server.connect(myID, thisClient);
 		} catch (IOException | NotBoundException e) {
 			e.printStackTrace();
 		}
@@ -45,7 +35,6 @@ public class MyClient extends DiffieHellmanKeyGenerator implements KeyClient {
 			mod = calculateKey(prime, primitiveRoot);
 			key = calculateKey(prime, server.getMod());
 			server.setKey(myID, mod);
-			System.out.println(myID + " : " + key);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
