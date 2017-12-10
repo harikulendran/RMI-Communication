@@ -4,8 +4,7 @@ import java.rmi.registry.*;
 import java.rmi.server.*;
 import java.io.IOException;
 
-public class MyServer extends DiffieHellmanKeyGenerator {
-	private MyClient client;
+public class MyServer extends DiffieHellmanServer {
 
 	public MyServer(String prime, String primitive) {
 		setPrimeValues(prime, primitive);
