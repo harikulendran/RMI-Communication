@@ -5,42 +5,71 @@ import java.rmi.server.*;
 import java.io.IOException;
 import java.util.UUID;
 
-public class MyClient extends DiffieHellmanKeyGenerator {
-	private KeyGenerator server;
+public class MyClient extends DiffieHellmanKeyGenerator implements KeyClient {
+	private KeyServer server;
 	private UUID myID;
+	String username;
 
 	public MyClient(String host, String username) {
+		myID = UUID.randomUUID();
+		this.username = username;
+		initClient();
 		connect(host);
-		readServerValues(username);
+		exchange();
 	}
 
-	public void connect(String host) {
+	private void initClient() {
+		try {
+			KeyClient thisClient = (KeyClient) UnicastRemoteObject.exportObject(this, 0);
+			Registry registry = LocateRegistry.getRegistry();
+			registry.bind(myID.toString(), thisClient);
+		} catch (IOException | AlreadyBoundException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void connect(String host) {
 		try {
 			Registry registry = LocateRegistry.getRegistry(host);
-			server = (KeyGenerator) registry.lookup("DHG");
-			myID = server.connect();
-
+			server = (KeyServer) registry.lookup("DHG");
+			server.connect(myID);
 		} catch (IOException | NotBoundException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void readServerValues(String username) {
+	private void exchange() {
 		try {
 			prime = server.getPrime();
 			primitiveRoot = server.getPrimitive();
 			mod = calculateKey(prime, primitiveRoot);
 			key = calculateKey(prime, server.getMod());
 			server.setKey(myID, mod);
-			String encoded = server.sendToMainServer(myID, username);
-			Decrypter d = new Decrypter(encoded);
-			System.out.println(d.decrypt(key.intValue()));
+			System.out.println(myID + " : " + key);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 
+	public void requestCipher() {
+		try {
+			server.requestCipher(myID, username);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void sendData(String data) {
+		Decrypter d = new Decrypter(data);
+		System.out.println(d.decrypt(key.intValue()));
+	}
+
 	public static void main(String[] args) {
-		MyClient client = new MyClient(args[0],args[1]);
+		for (int i=0; i<3; i++) {
+			new Thread(() -> {
+				MyClient client = new MyClient(args[0],args[1]);
+				client.requestCipher();
+			}).start();
+		}
 	}
 }

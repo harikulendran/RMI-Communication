@@ -14,7 +14,7 @@ public class MyServer extends DiffieHellmanServer {
 
 	private void initServer() {
 		try {
-			KeyGenerator DHG = (KeyGenerator) UnicastRemoteObject.exportObject(this, 0);
+			KeyServer DHG = (KeyServer) UnicastRemoteObject.exportObject(this, 0);
 			Registry registry = LocateRegistry.getRegistry();
 			registry.bind("DHG", DHG);
 			System.out.println("Ready...");
