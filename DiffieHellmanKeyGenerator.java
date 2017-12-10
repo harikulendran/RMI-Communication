@@ -10,7 +10,7 @@ public abstract class DiffieHellmanKeyGenerator {
 	protected BigInteger primitiveRoot;
 	protected BigInteger privateValue;
 	protected BigInteger key;
-	private Random rand;
+	protected Random rand;
 	
 	public DiffieHellmanKeyGenerator() {
 		rand = new Random();

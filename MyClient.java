@@ -3,9 +3,11 @@ import java.rmi.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
 import java.io.IOException;
+import java.util.UUID;
 
 public class MyClient extends DiffieHellmanKeyGenerator {
 	private KeyGenerator server;
+	private UUID myID;
 
 	public MyClient(String host, String username) {
 		connect(host);
@@ -16,6 +18,8 @@ public class MyClient extends DiffieHellmanKeyGenerator {
 		try {
 			Registry registry = LocateRegistry.getRegistry(host);
 			server = (KeyGenerator) registry.lookup("DHG");
+			myID = server.connect();
+
 		} catch (IOException | NotBoundException e) {
 			e.printStackTrace();
 		}
@@ -27,12 +31,9 @@ public class MyClient extends DiffieHellmanKeyGenerator {
 			primitiveRoot = server.getPrimitive();
 			mod = calculateKey(prime, primitiveRoot);
 			key = calculateKey(prime, server.getMod());
-			//System.out.println("Client Key: " + key);
-			server.setKey(mod);
-			String encoded = server.sendToMainServer(username, key.intValue());
-			System.out.println("Encrypted:\n" + encoded);
+			server.setKey(myID, mod);
+			String encoded = server.sendToMainServer(myID, username);
 			Decrypter d = new Decrypter(encoded);
-			System.out.println("Decrypted:");
 			System.out.println(d.decrypt(key.intValue()));
 		} catch (RemoteException e) {
 			e.printStackTrace();

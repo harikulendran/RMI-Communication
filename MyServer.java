@@ -9,7 +9,7 @@ public class MyServer extends DiffieHellmanServer {
 	public MyServer(String prime, String primitive) {
 		setPrimeValues(prime, primitive);
 		mod = calculateKey(this.prime, this.primitiveRoot);
-		//initServer();
+		initServer();
 	}
 
 	private void initServer() {
@@ -25,12 +25,5 @@ public class MyServer extends DiffieHellmanServer {
 
 	public static void main(String[] args) {
 		MyServer server = new MyServer("191","131");
-		server.initServer();
 	}
-
-	/*public void setClient(MyClient client) {
-		this.client = client;
-		key = calculateKey(prime, client.getMod());
-		System.out.println("Server Key: " + key);
-	}*/
 }
