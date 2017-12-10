@@ -27,13 +27,13 @@ public class MyClient extends DiffieHellmanKeyGenerator {
 			primitiveRoot = server.getPrimitive();
 			mod = calculateKey(prime, primitiveRoot);
 			key = calculateKey(prime, server.getMod());
-			System.out.println("Client Key: " + key);
+			//System.out.println("Client Key: " + key);
 			server.setKey(mod);
 			String encoded = server.sendToMainServer(username, key.intValue());
 			System.out.println("Encrypted:\n" + encoded);
 			Decrypter d = new Decrypter(encoded);
 			System.out.println("Decrypted:");
-			d.decrypt(key.intValue());
+			System.out.println(d.decrypt(key.intValue()));
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
