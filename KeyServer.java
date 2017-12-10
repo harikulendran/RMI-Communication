@@ -3,7 +3,7 @@ import java.math.*;
 import java.util.UUID;
 
 public interface KeyServer extends Remote {
-	public void connect(UUID clientID) throws RemoteException;
+	public void connect(UUID clientID, KeyClient client) throws RemoteException;
 	public BigInteger getPrime() throws RemoteException;
 	public BigInteger getPrimitive() throws RemoteException;
 	public BigInteger getMod() throws RemoteException;
