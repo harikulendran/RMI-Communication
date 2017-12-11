@@ -32,8 +32,8 @@ public class MyClient extends DiffieHellmanKeyGenerator implements KeyClient {
 		try {
 			prime = server.getPrime();
 			primitiveRoot = server.getPrimitive();
-			mod = calculateKey(prime, primitiveRoot);
-			key = calculateKey(prime, server.getMod());
+			mod = calculateKey(prime, primitiveRoot,privateValue);
+			key = calculateKey(prime, server.getMod(myID),privateValue);
 			server.setKey(myID, mod);
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -54,11 +54,11 @@ public class MyClient extends DiffieHellmanKeyGenerator implements KeyClient {
 	}
 
 	public static void main(String[] args) {
-		for (int i=0; i<3; i++) {
-			new Thread(() -> {
+		//for (int i=0; i<3; i++) {
+		//	new Thread(() -> {
 				MyClient client = new MyClient(args[0],args[1]);
 				client.requestCipher();
-			}).start();
-		}
+		//	}).start();
+		//}
 	}
 }

@@ -8,7 +8,6 @@ public class MyServer extends DiffieHellmanServer {
 
 	public MyServer(String prime, String primitive) {
 		setPrimeValues(prime, primitive);
-		mod = calculateKey(this.prime, this.primitiveRoot);
 		initServer();
 	}
 

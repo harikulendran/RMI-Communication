@@ -22,7 +22,7 @@ public abstract class DiffieHellmanKeyGenerator {
 		this.primitiveRoot = new BigInteger(primitiveRoot);
 	}
 
-	protected BigInteger calculateKey(BigInteger prime, BigInteger primitiveRoot) {
+	protected BigInteger calculateKey(BigInteger prime, BigInteger primitiveRoot, BigInteger privateValue) {
 		return primitiveRoot.modPow(privateValue, prime);
 	}
 

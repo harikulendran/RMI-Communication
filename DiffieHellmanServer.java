@@ -29,6 +29,7 @@ public abstract class DiffieHellmanServer extends DiffieHellmanKeyGenerator impl
 
 		ClientInfo uniqueClient = new ClientInfo(uniquePV, client);
 		clients.put(clientID, uniqueClient);
+		System.out.println("connected: " + clientID);
 	}
 
 	public BigInteger getPrime() throws RemoteException {
@@ -37,11 +38,11 @@ public abstract class DiffieHellmanServer extends DiffieHellmanKeyGenerator impl
 	public BigInteger getPrimitive() throws RemoteException {
 		return primitiveRoot;
 	}
-	public BigInteger getMod() throws RemoteException {
-		return mod;
+	public synchronized BigInteger getMod(UUID client) throws RemoteException {
+		return calculateKey(prime, primitiveRoot, clients.get(client).privateValue);
 	}
 	public synchronized void setKey(UUID client, BigInteger primitive) {
-		clients.get(client).key = calculateKey(prime, primitive);
+		clients.get(client).key = calculateKey(prime, primitive, clients.get(client).privateValue);
 		System.out.println(client + " : " + clients.get(client).key);
 	}
 
