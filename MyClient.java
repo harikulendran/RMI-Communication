@@ -51,6 +51,7 @@ public class MyClient extends DiffieHellmanKeyGenerator implements KeyClient {
 	public void sendData(String data) {
 		Decrypter d = new Decrypter(data);
 		System.out.println(d.decrypt(key.intValue()));
+		System.exit(0);
 	}
 
 	public static void main(String[] args) {
