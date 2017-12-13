@@ -51,15 +51,22 @@ public class MyClient extends DiffieHellmanKeyGenerator implements KeyClient {
 	public void sendData(String data) {
 		Decrypter d = new Decrypter(data);
 		System.out.println(d.decrypt(key.intValue()));
-		System.exit(0);
+	}
+	public void close() {
+		//make sure the server has enough time to disconnect
+		//before closing the client
+		new Thread(() -> {
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			System.exit(1);
+		}).start();
 	}
 
 	public static void main(String[] args) {
-		//for (int i=0; i<3; i++) {
-		//	new Thread(() -> {
-				MyClient client = new MyClient(args[0],args[1]);
-				client.requestCipher();
-		//	}).start();
-		//}
+		MyClient client = new MyClient(args[0],args[1]);
+		client.requestCipher();
 	}
 }

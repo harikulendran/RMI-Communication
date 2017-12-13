@@ -51,9 +51,16 @@ public abstract class DiffieHellmanServer extends DiffieHellmanKeyGenerator impl
 			Registry timReg = LocateRegistry.getRegistry("svm-tjn1f15-comp2207.ecs.soton.ac.uk", 12345);
 			CiphertextInterface ctstub = (CiphertextInterface) timReg.lookup("CiphertextProvider");
 			clients.get(client).client.sendData(ctstub.get(username, clients.get(client).key.intValue()));
+			close(client);
 		} catch (RemoteException | NotBoundException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public synchronized void close(UUID client) throws RemoteException {
+		KeyClient temp = clients.get(client).client;
+		clients.remove(client);
+		temp.close();
 	}
 
 	private class ClientInfo {
