@@ -9,6 +9,8 @@ public abstract class DiffieHellmanServer extends DiffieHellmanKeyGenerator impl
 
 	public DiffieHellmanServer() {
 		super();
+		//Policy file used is the one provided by Professor Norman in his test zip
+		//as it is the correct policy for the job I didn't see a reason to change it
 		System.setProperty("java.security.policy", "mypolicy");
 		if (System.getSecurityManager() == null)
 			System.setSecurityManager(new SecurityManager());
